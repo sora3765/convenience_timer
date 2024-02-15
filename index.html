@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convenience Timer System</title>
+<style>
+    .timer {
+        border: 2px solid #000;
+        padding: 10px;
+        margin: 10px 0;
+        width: 300px;
+    }
+    .warning {
+        background-color: yellow;
+    }
+    .critical {
+        background-color: red;
+    }
+    .subject {
+        font-weight: bold;
+    }
+    .emailInputContainer {
+        margin-bottom: 10px;
+    }
+    .clearButton {
+        margin-left: 10px;
+    }
+</style>
+</head>
+<body>
+
+<div id="emailSubjects"></div>
+<div id="timers"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    addEmailInput();
+});
+
+function addEmailInput() {
+    const container = document.createElement('div');
+    container.className = 'emailInputContainer';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Enter email subject...';
+    input.oninput = function(e) {
+        handleInput(e, container);
+    };
+
+    const clearButton = document.createElement('button');
+    clearButton.textContent = 'Clear';
+    clearButton.className = 'clearButton';
+    clearButton.onclick = function() {
+        clearInputAndTimer(input, container);
+    };
+
+    container.appendChild(input);
+    container.appendChild(clearButton);
+    document.getElementById('emailSubjects').appendChild(container);
+}
+
+function handleInput(e, container) {
+    const input = e.target;
+    const nextInput = input.parentNode.nextSibling;
+    if (input.value.trim() !== '' && !nextInput) {
+        addEmailInput();
+    }
+    if (!input.dataset.timerId && input.value.trim() !== '') {
+        startTimer(input, container);
+    }
+}
+
+function startTimer(input, container) {
+    const timerContainer = document.createElement('div');
+    timerContainer.classList.add('timer');
+    container.appendChild(timerContainer);
+
+    const subjectDisplay = document.createElement('div');
+    subjectDisplay.classList.add('subject');
+    subjectDisplay.textContent = input.value;
+    timerContainer.appendChild(subjectDisplay);
+
+    adjustContainerStyle(input.value, timerContainer);
+
+    const timerLabel = document.createElement('div');
+    timerLabel.textContent = "00:00:00";
+    timerContainer.appendChild(timerLabel);
+
+    const timer = setInterval(() => {
+        updateTimer(timerLabel, timer, input, subjectDisplay);
+    }, 1000);
+
+    input.dataset.timerId = timer;
+}
+
+function adjustContainerStyle(subject, container) {
+    if (subject.toLowerCase().includes('warning')) {
+        container.classList.add('warning');
+    } else if (subject.toLowerCase().includes('critical')) {
+        container.classList.add('critical');
+    } else {
+        container.classList.remove('warning', 'critical');
+    }
+}
+
+function updateTimer(label, timer, input, subjectDisplay) {
+    let [hours, minutes, seconds] = label.textContent.split(":").map(Number);
+    seconds++;
+    if (seconds >= 60) {
+        minutes++;
+        seconds = 0;
+    }
+    if (minutes >= 60) {
+        hours++;
+        minutes = 0;
+    }
+
+    label.textContent = 
+        (hours < 10 ? "0" + hours : hours) + ":" + 
+        (minutes < 10 ? "0" + minutes : minutes) + ":" + 
+        (seconds < 10 ? "0" + seconds : seconds);
+
+    subjectDisplay.textContent = input.value;
+    adjustContainerStyle(input.value, label.parentNode);
+
+    if (seconds === 0 && (minutes % 10 === 0 || minutes % 15 === 0)) {
+        alert(`Timer at ${minutes} minutes for ${input.value}!`);
+    }
+}
+
+function clearInputAndTimer(input, container) {
+    if (input.dataset.timerId) {
+        clearInterval(input.dataset.timerId);
+        delete input.dataset.timerId;
+    }
+    container.remove(); // Remove input container
+    // Optionally, remove related timer display
+}
+
+</script>
+</body>
+</html>
