@@ -16,7 +16,7 @@
         background-color: rgb(254, 254, 88);
     }
     .critical {
-        background-color: rgb(255, 75, 75);
+        background-color: rgb(255, 124, 124);
     }
     .subject {
         font-weight: bold;
@@ -40,6 +40,7 @@
 
 <div id="emailSubjects"></div>
 <div id="timers"></div>
+<div id="notifications"></div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -154,7 +155,7 @@ function displayNotification(message) {
 
     setTimeout(() => {
         notificationArea.removeChild(messageDiv);
-    }, 10000); // 100秒後に通知を消去
+    }, 100000); // 100秒後に通知を消去
 }
 
 
