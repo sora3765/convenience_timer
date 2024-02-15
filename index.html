@@ -7,18 +7,20 @@
 <style>
     .timer {
         border: 2px solid #000;
-        padding: 10px;
+        padding: 20px; /* パディングを増やす */
         margin: 10px 0;
-        width: 300px;
+        width: 400px; /* 幅を大きくする */
+        overflow-wrap: break-word; /* 長い単語も折り返す */
     }
     .warning {
-        background-color: yellow;
+        background-color: rgb(254, 254, 88);
     }
     .critical {
-        background-color: red;
+        background-color: rgb(255, 75, 75);
     }
     .subject {
         font-weight: bold;
+        font-size: 16px; /* フォントサイズを大きくする */
     }
     .emailInputContainer {
         margin-bottom: 10px;
@@ -26,7 +28,13 @@
     .clearButton {
         margin-left: 10px;
     }
+    .timeStamp { /* 新しいスタイルを追加 */
+        font-size: 14px;
+        color: #555;
+        margin-top: 10px;
+    }
 </style>
+
 </head>
 <body>
 
@@ -82,6 +90,13 @@ function startTimer(input, container) {
     subjectDisplay.textContent = input.value;
     timerContainer.appendChild(subjectDisplay);
 
+    // 時刻の表示を追加
+    const timeStamp = document.createElement('div');
+    timeStamp.classList.add('timeStamp');
+    const now = new Date();
+    timeStamp.textContent = `Added at: ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+    timerContainer.appendChild(timeStamp);
+
     adjustContainerStyle(input.value, timerContainer);
 
     const timerLabel = document.createElement('div');
@@ -94,6 +109,7 @@ function startTimer(input, container) {
 
     input.dataset.timerId = timer;
 }
+
 
 function adjustContainerStyle(subject, container) {
     if (subject.toLowerCase().includes('warning')) {
@@ -126,9 +142,21 @@ function updateTimer(label, timer, input, subjectDisplay) {
     adjustContainerStyle(input.value, label.parentNode);
 
     if (seconds === 0 && (minutes % 10 === 0 || minutes % 15 === 0)) {
-        alert(`Timer at ${minutes} minutes for ${input.value}!`);
+        displayNotification(`Timer at ${minutes} minutes for ${input.value}!`);
     }
 }
+
+function displayNotification(message) {
+    const notificationArea = document.getElementById('notifications');
+    const messageDiv = document.createElement('div');
+    messageDiv.textContent = message;
+    notificationArea.appendChild(messageDiv);
+
+    setTimeout(() => {
+        notificationArea.removeChild(messageDiv);
+    }, 10000); // 100秒後に通知を消去
+}
+
 
 function clearInputAndTimer(input, container) {
     if (input.dataset.timerId) {
