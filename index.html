@@ -5,12 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Convenience Timer System</title>
 <style>
+    /* タイマー表示のスタイル設定 */
     .timer {
         border: 2px solid #000;
-        padding: 20px; /* パディングを増やす */
+        padding: 20px;
         margin: 10px 0;
-        width: 400px; /* 幅を大きくする */
-        overflow-wrap: break-word; /* 長い単語も折り返す */
+        width: 400px;
+        overflow-wrap: break-word; /* 長い単語を折り返す */
     }
     .warning {
         background-color: rgb(254, 254, 88);
@@ -20,7 +21,7 @@
     }
     .subject {
         font-weight: bold;
-        font-size: 16px; /* フォントサイズを大きくする */
+        font-size: 18px;
     }
     .emailInputContainer {
         margin-bottom: 10px;
@@ -28,7 +29,7 @@
     .clearButton {
         margin-left: 10px;
     }
-    .timeStamp { /* 新しいスタイルを追加 */
+    .timeStamp {
         font-size: 14px;
         color: #555;
         margin-top: 10px;
@@ -43,17 +44,20 @@
 <div id="notifications"></div>
 
 <script>
+// ページ読み込み時に実行されるイベントリスナー
 document.addEventListener('DOMContentLoaded', function() {
-    addEmailInput();
+    addEmailInput();// 最初のメール入力フィールドを追加
 });
 
+// メール入力フィールドを動的に追加する関数
 function addEmailInput() {
     const container = document.createElement('div');
-    container.className = 'emailInputContainer';
+    container.className = 'emailInputContainer';// スタイルを適用
 
     const input = document.createElement('input');
     input.type = 'text';
     input.placeholder = 'Enter email subject...';
+    // 入力時のイベントハンドラー
     input.oninput = function(e) {
         handleInput(e, container);
     };
@@ -61,6 +65,7 @@ function addEmailInput() {
     const clearButton = document.createElement('button');
     clearButton.textContent = 'Clear';
     clearButton.className = 'clearButton';
+    // クリック時のイベントハンドラー
     clearButton.onclick = function() {
         clearInputAndTimer(input, container);
     };
@@ -70,17 +75,19 @@ function addEmailInput() {
     document.getElementById('emailSubjects').appendChild(container);
 }
 
+// 入力処理を担当する関数
 function handleInput(e, container) {
     const input = e.target;
     const nextInput = input.parentNode.nextSibling;
-    if (input.value.trim() !== '' && !nextInput) {
+    if (input.value.trim() !== '' && !nextInput) {// 入力があり、次の入力フィールドがない場合
         addEmailInput();
     }
-    if (!input.dataset.timerId && input.value.trim() !== '') {
+    if (!input.dataset.timerId && input.value.trim() !== '') {// タイマーが未開始で、入力がある場合
         startTimer(input, container);
     }
 }
 
+// タイマーを開始する関数
 function startTimer(input, container) {
     const timerContainer = document.createElement('div');
     timerContainer.classList.add('timer');
@@ -111,7 +118,7 @@ function startTimer(input, container) {
     input.dataset.timerId = timer;
 }
 
-
+// タイマーと件名のスタイルを調整する関数
 function adjustContainerStyle(subject, container) {
     if (subject.toLowerCase().includes('warning')) {
         container.classList.add('warning');
@@ -122,6 +129,7 @@ function adjustContainerStyle(subject, container) {
     }
 }
 
+// タイマーを更新する関数
 function updateTimer(label, timer, input, subjectDisplay) {
     let [hours, minutes, seconds] = label.textContent.split(":").map(Number);
     seconds++;
@@ -147,6 +155,7 @@ function updateTimer(label, timer, input, subjectDisplay) {
     }
 }
 
+// 通知を表示する関数
 function displayNotification(message) {
     const notificationArea = document.getElementById('notifications');
     const messageDiv = document.createElement('div');
@@ -158,14 +167,13 @@ function displayNotification(message) {
     }, 100000); // 100秒後に通知を消去
 }
 
-
+// 入力フィールドと関連タイマーをクリアする関数
 function clearInputAndTimer(input, container) {
     if (input.dataset.timerId) {
         clearInterval(input.dataset.timerId);
         delete input.dataset.timerId;
     }
-    container.remove(); // Remove input container
-    // Optionally, remove related timer display
+    container.remove(); 
 }
 
 </script>
